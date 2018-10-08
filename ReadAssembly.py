@@ -1,4 +1,13 @@
 class AssemblyGraph:
+    """Abstract base class for a directed graph.
+
+    A functional directed graph class can be obtained by inheriting from
+    this class and overriding the methods has_edge and add_edge.  All other
+    methods have default implementations, which may not be the most efficient.
+    These other methods should also be overrriden as appropriate to improve
+    efficiency.
+    """
+
     def __init__(self, vertices=None):
         """Constructs a directed graph with num_vertices vertices and zero edges"""
         self.vertices = dict() if not vertices else self.add_vertices(vertices)
@@ -74,7 +83,9 @@ class AssemblyGraph:
     def generate_possible_edges(self):
         """optimizes sorting after generating all possible edges"""
         from operator import itemgetter
-        edges = [(i, j, self.overlap_length(i, j)) for j in self.vertices for i in self.vertices if i != j]
+        from itertools import permutations
+        
+        edges = map(lambda x: (x[0], x[1], self.overlap_length(x[0],x[1])), permutations(self.vertices, 2))
         lexi_sort = sorted(edges, key=itemgetter(0, 1), reverse=True)
         weight_sort = sorted(lexi_sort, key=itemgetter(2))
         return weight_sort
@@ -142,6 +153,11 @@ class AssemblyGraph:
             curr = read_mapper[curr]
         return self.merge_ordered_reads(ordered_reads)
 
+    def __str__(self):
+        """Returns a string representation of the graph, so that it may be printed."""
+        return "DirectedGraph with %d vertices and %d edge(s):\n%s" % (self.num_vertices(),
+                                                                       self.num_edges(),
+                                                                       sorted(self.get_edges()))
     
 from collections import deque as queue
 
@@ -156,5 +172,4 @@ def greedy_assemble(reads):
         src, dest = edge = q.pop()[0:2]  # pull out the two vertices, ignore weight
         if g.outdegree(src) == g.indegree(dest) == 0 and g.does_not_cause_cycle(edge):
             g.add_edge(*edge)
-
     return g.superstring_from_edges()
