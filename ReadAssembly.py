@@ -173,3 +173,14 @@ def greedy_assemble(reads):
         if g.outdegree(src) == g.indegree(dest) == 0 and g.does_not_cause_cycle(edge):
             g.add_edge(*edge)
     return g.superstring_from_edges()
+
+
+def read_strings_from_file(filename):
+    return [line.rstrip() for line in open(filename)]
+
+
+if __name__ == "__main__":
+    from time import time
+    start = time()
+    superstring = greedy_assemble(read_strings_from_file("ebola_full_genome_reads.txt"))
+    print("superstring in {} seconds: {}".format(time() - start, superstring))
