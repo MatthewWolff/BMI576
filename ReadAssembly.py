@@ -1,13 +1,5 @@
 class AssemblyGraph:
-    """Abstract base class for a directed graph.
-
-    A functional directed graph class can be obtained by inheriting from
-    this class and overriding the methods has_edge and add_edge.  All other
-    methods have default implementations, which may not be the most efficient.
-    These other methods should also be overrriden as appropriate to improve
-    efficiency.
-    """
-
+    
     def __init__(self, vertices=None):
         """Constructs a directed graph with num_vertices vertices and zero edges"""
         self.vertices = dict() if not vertices else self.add_vertices(vertices)
@@ -152,12 +144,6 @@ class AssemblyGraph:
             ordered_reads.append(read_mapper[curr])
             curr = read_mapper[curr]
         return self.merge_ordered_reads(ordered_reads)
-
-    def __str__(self):
-        """Returns a string representation of the graph, so that it may be printed."""
-        return "DirectedGraph with %d vertices and %d edge(s):\n%s" % (self.num_vertices(),
-                                                                       self.num_edges(),
-                                                                       sorted(self.get_edges()))
     
 from collections import deque as queue
 
